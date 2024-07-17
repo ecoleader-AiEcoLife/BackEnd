@@ -16,9 +16,9 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         Info info = new Info()
-            .title("swagger 테스트")
+            .title("Eddy API")
             .version("1.0")
-            .description("API에 대한 설명 부분");
+            .description("분리수거 정보 제공 Ai 서비스 및 지도 서비스");
         return new OpenAPI()
             .components(new Components())
             .info(info);

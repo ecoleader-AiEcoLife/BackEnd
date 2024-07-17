@@ -1,13 +1,10 @@
 package com.example.practice_eddy.model.disposalBoard;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class DisposalBoard {
@@ -15,50 +12,41 @@ public class DisposalBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
-    private String itemName;
-    @NotBlank
+    @Column
+    private String title;
+    @Column
     private String content;
-    @CreationTimestamp
-    private LocalDateTime createDate;
-    @UpdateTimestamp
-    private LocalDateTime modifiedDate;
+    @Column
+    private String subContent;
 
     public DisposalBoard() {
     }
 
-    public DisposalBoard(Long id, String itemName, String content, LocalDateTime createDate,
-        LocalDateTime modifiedDate) {
+    public DisposalBoard(Long id, String title, String content, String subContent) {
         this.id = id;
-        this.itemName = itemName;
+        this.title = title;
         this.content = content;
-        this.createDate = createDate;
-        this.modifiedDate = modifiedDate;
+        this.subContent = subContent;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getTitle() {
+        return title;
     }
 
     public String getContent() {
         return content;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public LocalDateTime getModifiedDate() {
-        return modifiedDate;
+    public String getSubContent() {
+        return subContent;
     }
 
     public DisposalBoardDTO toDisposalBoardDTO() {
-        return new DisposalBoardDTO(this.id, this.itemName, this.content, this.createDate,
-            this.modifiedDate);
+        return new DisposalBoardDTO(this.id, this.title, this.content, this.subContent);
     }
 
 }

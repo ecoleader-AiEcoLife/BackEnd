@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DisposalBoardRepository extends JpaRepository<DisposalBoard,Long> {
-    Optional<DisposalBoard> findByItemName(String itemName);
+    Optional<DisposalBoard> findByTitle(String title);
     void deleteById(Long id);
 }
