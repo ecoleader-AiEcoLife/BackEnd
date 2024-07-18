@@ -90,14 +90,14 @@ public class DisposalBoardController {
     public ResponseEntity<Void> deleteBoard(
         @Parameter(description = "삭제될 게시판의 id", example = "1") @PathVariable("id") Long id) {
         disposalBoardService.deleteDisposalBoard(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "특정 type의 Disposal board 목록 조회")
     @ApiResponse(responseCode = "200", description = "성공적으로 목록을 조회함",
         content = @Content(mediaType = "application/json",
             schema = @Schema(type = "array", implementation = DisposalBoardDTO.class)))
-    @GetMapping("/type/{typeId}")
+    @GetMapping("/boards/by-type/{id}")
     public ResponseEntity<List<DisposalBoardDTO>> getBoardListByTypeId(
         @Parameter(description = "조회할 type의 id", example = "1") @PathVariable("typeId") Long typeId) {
         return ResponseEntity.ok(disposalBoardService.getBoardListByTypeId(typeId));

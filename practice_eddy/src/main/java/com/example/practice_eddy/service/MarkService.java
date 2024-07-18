@@ -47,7 +47,8 @@ public class MarkService {
             markDTO.getImgUrl()
         );
 
-        return existingMark.toDTO();
+        Mark updatedMark = markRepository.save(existingMark);
+        return updatedMark.toDTO();
     }
 
     @Transactional
