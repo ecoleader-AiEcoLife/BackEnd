@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 @Schema(description = "마커 엔티티")
 @Entity
 public class Mark {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "마커 ID", example = "1")

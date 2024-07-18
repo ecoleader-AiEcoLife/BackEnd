@@ -3,6 +3,7 @@ package com.example.practice_eddy.exception.customException;
 import com.example.practice_eddy.exception.ErrorCode;
 
 public abstract class CustomException extends RuntimeException {
+
     private final ErrorCode errorCode;
 
     protected CustomException(ErrorCode errorCode) {

@@ -11,7 +11,7 @@ public class ErrorResponse {
     private final String error;
     private final String message;
     private final String path;
-    private List<FieldError> fieldErrors;
+    private final List<FieldError> fieldErrors;
 
     public ErrorResponse(ErrorCode errorCode, String path) {
         this(errorCode, path, errorCode.getMessage());
@@ -57,6 +57,7 @@ public class ErrorResponse {
     }
 
     public static class FieldError {
+
         private final String field;
         private final String message;
 
