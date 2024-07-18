@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DisposalBoardRepository extends JpaRepository<DisposalBoard,Long> {
+public interface DisposalBoardRepository extends JpaRepository<DisposalBoard, Long> {
+
+    List<DisposalBoard> findAllByTypeId(Long typeId);
+
     Optional<DisposalBoard> findByTitle(String title);
-    void deleteById(Long id);
 }
