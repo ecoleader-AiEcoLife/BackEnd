@@ -1,9 +1,17 @@
 package com.example.practice_eddy.integration;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.example.practice_eddy.model.disposalBoard.DisposalBoardDTO;
+import com.example.practice_eddy.model.disposalBoard.DisposalBoardForm;
 import com.example.practice_eddy.model.disposalBoard.TypeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,11 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,39 +43,14 @@ public class DisposalBoardIntegrationTest {
     }
 
     @Test
-    public void testTypeLifecycle() throws Exception {
-        // Create
-        TypeDTO createdType = createType();
-        assertNotNull(createdType.id());
-
-        // Read
-        mockMvc.perform(get("/disboard/type/{id}", createdType.id()))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("테스트 타입"));
-
-        // Update
-        TypeDTO updatedTypeDTO = new TypeDTO(createdType.id(), "수정된 타입", "http://example.com/updated_image.jpg");
-        mockMvc.perform(put("/disboard/type/{id}", createdType.id())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedTypeDTO)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("수정된 타입"));
-
-        // List
-        mockMvc.perform(get("/disboard/type/list"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].name").value("수정된 타입"));
-    }
-
-    @Test
     public void testBoardLifecycle() throws Exception {
         TypeDTO createdType = createType();
 
         // Create
-        DisposalBoardDTO boardDTO = new DisposalBoardDTO(null, "테스트 게시글", "내용", "부내용", createdType);
+        DisposalBoardForm boardForm = new DisposalBoardForm("테스트 게시글", "내용", "부내용", createdType.id());
         MvcResult result = mockMvc.perform(post("/disboard")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(boardDTO)))
+                .content(objectMapper.writeValueAsString(boardForm)))
             .andExpect(status().isCreated())
             .andReturn();
 
@@ -83,13 +61,13 @@ public class DisposalBoardIntegrationTest {
         mockMvc.perform(get("/disboard/{id}", createdBoard.id()))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.title").value("테스트 게시글"))
-            .andExpect(jsonPath("$.type.id").value(createdType.id()));
+            .andExpect(jsonPath("$.typeId").value(createdType.id()));
 
         // Update
-        DisposalBoardDTO updatedBoardDTO = new DisposalBoardDTO(createdBoard.id(), "수정된 게시글", "수정된 내용", "수정된 부내용", createdType);
+        DisposalBoardForm updatedBoardForm = new DisposalBoardForm("수정된 게시글", "수정된 내용", "수정된 부내용", createdType.id());
         mockMvc.perform(put("/disboard/{id}", createdBoard.id())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedBoardDTO)))
+                .content(objectMapper.writeValueAsString(updatedBoardForm)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.title").value("수정된 게시글"));
 

@@ -27,7 +27,7 @@ public class DisposalBoardService {
     @Transactional
     public DisposalBoardDTO insertBoard(DisposalBoardDTO boardDTO) {
         checkDuplicateTitle(boardDTO.title());
-        Type type = findTypeById(boardDTO.type().id());
+        Type type = findTypeById(boardDTO.typeId());
         DisposalBoard board = new DisposalBoard(null, boardDTO.title(), boardDTO.content(),
             boardDTO.subContent(), type);
         return disposalBoardRepository.save(board).toDisposalBoardDTO();
@@ -61,7 +61,7 @@ public class DisposalBoardService {
         if (!board.getTitle().equals(boardDTO.title())) {
             checkDuplicateTitle(boardDTO.title());
         }
-        Type type = findTypeById(boardDTO.type().id());
+        Type type = findTypeById(boardDTO.typeId());
         board.update(boardDTO.title(), boardDTO.content(), boardDTO.subContent(), type);
         return board.toDisposalBoardDTO();
     }

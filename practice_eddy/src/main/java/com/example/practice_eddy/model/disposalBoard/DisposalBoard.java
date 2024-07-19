@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-
 @Entity
 public class DisposalBoard {
 
@@ -68,7 +67,12 @@ public class DisposalBoard {
     }
 
     public DisposalBoardDTO toDisposalBoardDTO() {
-        return new DisposalBoardDTO(this.id, this.title, this.content, this.subContent,
-            this.type.toDTO());
+        return new DisposalBoardDTO(
+            this.id,
+            this.title,
+            this.content,
+            this.subContent,
+            this.type.getId()  // Type 객체 대신 typeId를 전달
+        );
     }
 }

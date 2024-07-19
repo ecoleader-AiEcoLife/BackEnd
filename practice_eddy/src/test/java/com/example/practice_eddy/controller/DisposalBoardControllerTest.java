@@ -3,7 +3,7 @@ package com.example.practice_eddy.controller;
 import com.example.practice_eddy.exception.customException.DuplicateResourceException;
 import com.example.practice_eddy.exception.customException.ResourceNotFoundException;
 import com.example.practice_eddy.model.disposalBoard.DisposalBoardDTO;
-import com.example.practice_eddy.model.disposalBoard.TypeDTO;
+import com.example.practice_eddy.model.disposalBoard.DisposalBoardForm;
 import com.example.practice_eddy.service.DisposalBoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,19 +37,19 @@ public class DisposalBoardControllerTest {
     private ObjectMapper objectMapper;
 
     private DisposalBoardDTO boardDTO;
-    private TypeDTO typeDTO;
+    private DisposalBoardForm boardForm;
 
     @BeforeEach
     void setUp() {
-        typeDTO = new TypeDTO(1L, "일반쓰레기", "http://example.com/image.jpg");
-        boardDTO = new DisposalBoardDTO(1L, "제목", "내용", "부내용", typeDTO);
+        boardDTO = new DisposalBoardDTO(1L, "제목", "내용", "부내용", 1L);
+        boardForm = new DisposalBoardForm("제목", "내용", "부내용", 1L);
     }
 
     @Test
     void getList_Success() throws Exception {
         List<DisposalBoardDTO> boards = Arrays.asList(
-            new DisposalBoardDTO(1L, "제목1", "내용1", "부내용1", typeDTO),
-            new DisposalBoardDTO(2L, "제목2", "내용2", "부내용2", typeDTO)
+            new DisposalBoardDTO(1L, "제목1", "내용1", "부내용1", 1L),
+            new DisposalBoardDTO(2L, "제목2", "내용2", "부내용2", 1L)
         );
 
         when(disposalBoardService.getBoardList()).thenReturn(boards);
@@ -87,17 +87,17 @@ public class DisposalBoardControllerTest {
 
         mockMvc.perform(post("/disboard")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(boardDTO)))
+                .content(objectMapper.writeValueAsString(boardForm)))
             .andExpect(status().isCreated());
     }
 
     @Test
     void createBoard_DuplicateTitle() throws Exception {
-        when(disposalBoardService.insertBoard(any(DisposalBoardDTO.class))).thenThrow(new DuplicateResourceException("DisposalBoard", "title", boardDTO.title()));
+        when(disposalBoardService.insertBoard(any(DisposalBoardDTO.class))).thenThrow(new DuplicateResourceException("DisposalBoard", "title", boardForm.getTitle()));
 
         mockMvc.perform(post("/disboard")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(boardDTO)))
+                .content(objectMapper.writeValueAsString(boardForm)))
             .andExpect(status().isConflict());
     }
 
@@ -107,7 +107,7 @@ public class DisposalBoardControllerTest {
 
         mockMvc.perform(put("/disboard/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(boardDTO)))
+                .content(objectMapper.writeValueAsString(boardForm)))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(1))
@@ -120,7 +120,7 @@ public class DisposalBoardControllerTest {
 
         mockMvc.perform(put("/disboard/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(boardDTO)))
+                .content(objectMapper.writeValueAsString(boardForm)))
             .andExpect(status().isNotFound());
     }
 

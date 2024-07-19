@@ -1,6 +1,7 @@
 package com.example.practice_eddy.controller;
 
 import com.example.practice_eddy.model.disposalBoard.DisposalBoardDTO;
+import com.example.practice_eddy.model.disposalBoard.DisposalBoardForm;
 import com.example.practice_eddy.service.DisposalBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,11 +59,13 @@ public class DisposalBoardController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "성공적으로 게시판을 추가함"),
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+        @ApiResponse(responseCode = "404", description = "해당 typeId의 Type을 찾을 수 없음"),
         @ApiResponse(responseCode = "409", description = "중복된 제목")
     })
     @PostMapping
     public ResponseEntity<DisposalBoardDTO> createBoard(
-        @Valid @RequestBody DisposalBoardDTO boardDTO) {
+        @Valid @RequestBody DisposalBoardForm disposalBoardForm) {
+        DisposalBoardDTO boardDTO = new DisposalBoardDTO(disposalBoardForm);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(disposalBoardService.insertBoard(boardDTO));
     }
@@ -77,7 +80,14 @@ public class DisposalBoardController {
     @PutMapping("/{id}")
     public ResponseEntity<DisposalBoardDTO> updateBoard(
         @Parameter(description = "수정할 게시판의 id", example = "1") @PathVariable("id") Long id,
-        @Valid @RequestBody DisposalBoardDTO boardDTO) {
+        @Valid @RequestBody DisposalBoardForm disposalBoardForm) {
+        DisposalBoardDTO boardDTO = new DisposalBoardDTO(
+            null,
+            disposalBoardForm.getTitle(),
+            disposalBoardForm.getContent(),
+            disposalBoardForm.getSubContent(),
+            disposalBoardForm.getTypeId()
+        );
         return ResponseEntity.ok(disposalBoardService.updateDisposalBoard(id, boardDTO));
     }
 

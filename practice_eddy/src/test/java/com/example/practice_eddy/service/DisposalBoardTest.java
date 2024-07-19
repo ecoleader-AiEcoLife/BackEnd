@@ -5,7 +5,6 @@ import com.example.practice_eddy.exception.customException.ResourceNotFoundExcep
 import com.example.practice_eddy.model.disposalBoard.DisposalBoard;
 import com.example.practice_eddy.model.disposalBoard.DisposalBoardDTO;
 import com.example.practice_eddy.model.disposalBoard.Type;
-import com.example.practice_eddy.model.disposalBoard.TypeDTO;
 import com.example.practice_eddy.repository.DisposalBoardRepository;
 import com.example.practice_eddy.repository.TypeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,13 +39,12 @@ class DisposalBoardServiceTest {
 
     @Test
     void insertBoard_Success() {
-        TypeDTO typeDTO = new TypeDTO(1L, "일반쓰레기", "http://example.com/image.jpg");
-        DisposalBoardDTO boardDTO = new DisposalBoardDTO(null, "제목", "내용", "부내용", typeDTO);
+        DisposalBoardDTO boardDTO = new DisposalBoardDTO(null, "제목", "내용", "부내용", 1L);
         Type type = new Type(1L, "일반쓰레기", "http://example.com/image.jpg");
         DisposalBoard board = new DisposalBoard(1L, "제목", "내용", "부내용", type);
 
         when(disposalBoardRepository.findByTitle(boardDTO.title())).thenReturn(Optional.empty());
-        when(typeRepository.findById(typeDTO.id())).thenReturn(Optional.of(type));
+        when(typeRepository.findById(boardDTO.typeId())).thenReturn(Optional.of(type));
         when(disposalBoardRepository.save(any(DisposalBoard.class))).thenReturn(board);
 
         DisposalBoardDTO result = disposalBoardService.insertBoard(boardDTO);
@@ -56,17 +54,16 @@ class DisposalBoardServiceTest {
         assertEquals(boardDTO.title(), result.title());
         assertEquals(boardDTO.content(), result.content());
         assertEquals(boardDTO.subContent(), result.subContent());
-        assertEquals(typeDTO.id(), result.type().id());
+        assertEquals(boardDTO.typeId(), result.typeId());
 
         verify(disposalBoardRepository).findByTitle(boardDTO.title());
-        verify(typeRepository).findById(typeDTO.id());
+        verify(typeRepository).findById(boardDTO.typeId());
         verify(disposalBoardRepository).save(any(DisposalBoard.class));
     }
 
     @Test
     void insertBoard_DuplicateTitle() {
-        TypeDTO typeDTO = new TypeDTO(1L, "일반쓰레기", "http://example.com/image.jpg");
-        DisposalBoardDTO boardDTO = new DisposalBoardDTO(null, "제목", "내용", "부내용", typeDTO);
+        DisposalBoardDTO boardDTO = new DisposalBoardDTO(null, "제목", "내용", "부내용", 1L);
 
         when(disposalBoardRepository.findByTitle(boardDTO.title())).thenReturn(Optional.of(new DisposalBoard()));
 
@@ -92,7 +89,7 @@ class DisposalBoardServiceTest {
         assertEquals(board.getTitle(), result.title());
         assertEquals(board.getContent(), result.content());
         assertEquals(board.getSubContent(), result.subContent());
-        assertEquals(type.getId(), result.type().id());
+        assertEquals(type.getId(), result.typeId());
 
         verify(disposalBoardRepository).findById(id);
     }
@@ -132,14 +129,13 @@ class DisposalBoardServiceTest {
     @Test
     void updateDisposalBoard_Success() {
         Long id = 1L;
-        TypeDTO typeDTO = new TypeDTO(1L, "일반쓰레기", "http://example.com/image.jpg");
-        DisposalBoardDTO boardDTO = new DisposalBoardDTO(id, "수정된 제목", "수정된 내용", "수정된 부내용", typeDTO);
+        DisposalBoardDTO boardDTO = new DisposalBoardDTO(id, "수정된 제목", "수정된 내용", "수정된 부내용", 1L);
         Type type = new Type(1L, "일반쓰레기", "http://example.com/image.jpg");
         DisposalBoard existingBoard = new DisposalBoard(id, "원래 제목", "원래 내용", "원래 부내용", type);
 
         when(disposalBoardRepository.findById(id)).thenReturn(Optional.of(existingBoard));
         when(disposalBoardRepository.findByTitle(boardDTO.title())).thenReturn(Optional.empty());
-        when(typeRepository.findById(typeDTO.id())).thenReturn(Optional.of(type));
+        when(typeRepository.findById(boardDTO.typeId())).thenReturn(Optional.of(type));
 
         DisposalBoardDTO result = disposalBoardService.updateDisposalBoard(id, boardDTO);
 
@@ -148,18 +144,17 @@ class DisposalBoardServiceTest {
         assertEquals(boardDTO.title(), result.title());
         assertEquals(boardDTO.content(), result.content());
         assertEquals(boardDTO.subContent(), result.subContent());
-        assertEquals(typeDTO.id(), result.type().id());
+        assertEquals(boardDTO.typeId(), result.typeId());
 
         verify(disposalBoardRepository).findById(id);
         verify(disposalBoardRepository).findByTitle(boardDTO.title());
-        verify(typeRepository).findById(typeDTO.id());
+        verify(typeRepository).findById(boardDTO.typeId());
     }
 
     @Test
     void updateDisposalBoard_NotFound() {
         Long id = 1L;
-        TypeDTO typeDTO = new TypeDTO(1L, "일반쓰레기", "http://example.com/image.jpg");
-        DisposalBoardDTO boardDTO = new DisposalBoardDTO(id, "수정된 제목", "수정된 내용", "수정된 부내용", typeDTO);
+        DisposalBoardDTO boardDTO = new DisposalBoardDTO(id, "수정된 제목", "수정된 내용", "수정된 부내용", 1L);
 
         when(disposalBoardRepository.findById(id)).thenReturn(Optional.empty());
 
